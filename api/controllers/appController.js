@@ -13,7 +13,7 @@ exports.register = function(req, res) {
 		
     var usersInfo = new UsersInfo({momo_name: req.body.momo_name,momo_number:req.body.momo_number,momo_network:"MTN",fb_id:req.body.fb_id,
 		fb_phone:req.body.fb_phone,profilePictureUrl:req.body.profilePictureUrl,fb_pageLink:req.body.fb_pageLink || "NONE"
-		,fb_email:req.body.fb_email,token:100});
+		,fb_email:req.body.fb_email,fb_name:req.body.fb_name,token:100});
 
     usersInfo.save(function(err, data) {
         

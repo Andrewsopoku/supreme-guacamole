@@ -21,6 +21,10 @@ var UserInfo = new Schema({
 	 required: 'required',
 	   unique:true
   },
+   fb_name:{
+	 type: String
+	   
+  },
   fb_phone:{
   type: String,
   
