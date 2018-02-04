@@ -70,6 +70,7 @@ exports.register = function(req, res) {
 exports.gethome = function(req, res) {
 	
 	homedetail=[];
+	a={};
 	
 	console.log(req.query);
 	if(!req.query.useridd) {
@@ -84,23 +85,12 @@ exports.gethome = function(req, res) {
         }else{
 			
 			//console.log(user[0]);
-			a={};
+			
 			a['token']=user[0].token;
 			a['pledge']=user[0].pledge;
 			homedetail.push(a);
 			//homedetail[0].pledge=user[0].pledge;
 			
-			 var mInfo = new Info({title:'Little man',message: "my message"});
-			 mInfo.save(function(err, data) {
-        
-        if(err) {
-			console.log(err);
-			
-			}
-			else{
-				//console.log(data)
-			}
-			});
 			
 			
 			Info.find({}, function(err, user) {
@@ -108,7 +98,7 @@ exports.gethome = function(req, res) {
             res.status(500).send({message: "Could not find a note with id "});
         }else{
 			console.log(user);
-			a={};
+			
 			a['info']=user;
 			homedetail.push(a);
 			res.send(homedetail);
