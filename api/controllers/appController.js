@@ -1,4 +1,6 @@
 var UsersInfo = require('../models/appUser.js');
+var Info=require('../models/appInfo.js');
+
 
 
 exports.register = function(req, res) {
@@ -61,4 +63,48 @@ exports.register = function(req, res) {
 }
     
     
+};
+
+
+
+exports.gethome = function(req, res) {
+	
+	homedetail=[];
+	
+	console.log(req.query);
+	if(!req.query.useridd) {
+        res.status(400).send({message: "You are lost"});
+        console.log("suspect here");
+    }
+   else {
+	   
+	UsersInfo.find({"_id":req.query.useridd}, function(err, user) {
+        if(err) {
+            res.status(500).send({message: "Could not find a note with id "});
+        }else{
+			
+			//console.log(user[0]);
+			a={};
+			a['token']=user[0].token;
+			a['pledge']=user[0].pledge;
+			homedetail.push(a);
+			
+			Info.find({}, function(err, user) {
+        if(err) {
+            res.status(500).send({message: "Could not find a note with id "});
+        }else{
+			console.log(user);
+			a={};
+			a['info']=user;
+			homedetail.push(a);
+			res.send(homedetail);
+			
+		}});
+		
+		
+    }    
+}
+);
+
+}
 };

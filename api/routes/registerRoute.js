@@ -4,5 +4,6 @@ module.exports = function(app) {
 
     // Create a new Note
     app.post('/register', controller.register);
+     app.get('/gethome', controller.gethome);
 
 }

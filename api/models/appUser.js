@@ -53,6 +53,10 @@ var UserInfo = new Schema({
   status: {
     type: String,
     default: 'active'
+  },
+  pledge:{
+	  type:Number,
+	  default:0
   }
 });
 
