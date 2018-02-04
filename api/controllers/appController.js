@@ -83,15 +83,12 @@ exports.gethome = function(req, res) {
         if(err) {
             res.status(500).send({message: "Could not find a note with id "});
         }else{
-			
-			//console.log(user[0]);
+			if(user){
+			console.log(user[0]);
 			
 			a['token']=user[0].token;
 			a['pledge']=user[0].pledge;
 			homedetail.push(a);
-			//homedetail[0].pledge=user[0].pledge;
-			
-			
 			
 			Info.find({}, function(err, user) {
         if(err) {
@@ -105,7 +102,10 @@ exports.gethome = function(req, res) {
 			
 		}});
 		
+	}else{
+		  res.status(500).send({message: "Could not find a note with id "});
 		
+	}
     }    
 }
 );
