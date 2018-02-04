@@ -83,7 +83,7 @@ exports.gethome = function(req, res) {
         if(err) {
             res.status(500).send({message: "Could not find a note with id "});
         }else{
-			if(user){
+			if(user[0]){
 			console.log(user[0]);
 			
 			a['token']=user[0].token;
