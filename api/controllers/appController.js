@@ -88,6 +88,20 @@ exports.gethome = function(req, res) {
 			a['token']=user[0].token;
 			a['pledge']=user[0].pledge;
 			homedetail.push(a);
+			//homedetail[0].pledge=user[0].pledge;
+			
+			 var mInfo = new Info({title:'Little man',message: "my message"});
+			 mInfo.save(function(err, data) {
+        
+        if(err) {
+			console.log(err);
+			
+			}
+			else{
+				//console.log(data)
+			}
+			});
+			
 			
 			Info.find({}, function(err, user) {
         if(err) {

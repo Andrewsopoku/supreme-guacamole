@@ -4,6 +4,11 @@ var Schema = mongoose.Schema;
 
 
 var Info = new Schema({
+	
+	  title: {
+    type: String
+    //required: 'Kindly enter the name of the task'
+  },
   message: {
     type: String
     //required: 'Kindly enter the name of the task'
