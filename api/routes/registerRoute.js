@@ -7,6 +7,7 @@ module.exports = function(app) {
      app.get('/gethome', controller.gethome);
       app.post('/updateuser', controller.updateuser);
       app.post('/buytoken', controller.buytoken);
+      app.post('/buytokencallback', controller.buytokenCallback);
       
 
 }

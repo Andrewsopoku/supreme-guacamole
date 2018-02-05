@@ -179,7 +179,7 @@ exports.buytoken = function(req, res) {
              request.post({url:'https://api.hubtel.com/v1/merchantaccount/merchants/HM3005170017/receive/mobilemoney',
 				    headers:{"authorization":"Basic YWlxenByeGI6cGpkZWh2bXg="},
 				   form: {"CustomerName":momoname.toString(),"CustomerMsisdn":momonumber.toString(),
-					   "Channel":'mtn-gh',"Amount":amt,"PrimaryCallbackUrl":"google.com","Description":"Token purchase","ClientReference":clientref.toString()}},
+					   "Channel":'mtn-gh',"Amount":amt,"PrimaryCallbackUrl":"http://5.150.236.20:8080/buytokencallback","Description":"Token purchase","ClientReference":clientref.toString()}},
 				    function(err,response,body){ 
 					   
 					   if(err){
@@ -216,7 +216,7 @@ exports.buytoken = function(req, res) {
    
    
    
-   exports.buytokenCalback = function(req, res) {
+   exports.buytokenCallback = function(req, res) {
 	   
 	 console.log(req.body);  
 	   
