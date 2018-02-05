@@ -161,7 +161,7 @@ exports.buytoken = function(req, res) {
 			if(user[0]){
 				
 				
-				console.log(user[0]);				
+				//console.log(user[0]);				
 	   var tokenexchange=new Tokenexchange({userid:req.body.useridd,amount:amt,token:token});
 	    tokenexchange.save(function(err, data) {
         
@@ -218,7 +218,9 @@ exports.buytoken = function(req, res) {
    
    exports.buytokenCallback = function(req, res) {
 	   
-	 console.log(req.body);  
+	 console.log(req.body); 
+	 
+	 res.send({message:"callback"}) 
 	   
    };
 
