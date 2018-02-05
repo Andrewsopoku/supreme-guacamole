@@ -1,5 +1,7 @@
 var UsersInfo = require('../models/appUser.js');
 var Info=require('../models/appInfo.js');
+var Tokenexchange=require('../models/appTokenexchange.js');
+var request = require('request');
 
 
 
@@ -114,7 +116,7 @@ exports.gethome = function(req, res) {
 };
 
 exports.updateuser = function(req, res) {
-	console
+	
 	 if(!req.body.useridd) {
         res.status(400).send({message: "You are lost"});
         console.log("attacker here");
@@ -136,4 +138,91 @@ exports.updateuser = function(req, res) {
 	
 	
 };
+
+
+exports.buytoken = function(req, res) {
+	var token;
+	var amt;
+	 if((!req.body.useridd) || (!req.body.amt)) {
+        res.status(400).send({message: "You are lost"});
+        console.log("attacker here");
+    }
+   else {
+	  
+	   token=req.body.amt;
+	   amt=token/10;
+	   
+	   
+	   UsersInfo.find({"_id":req.body.useridd}, function(err, user) {
+        if(err) {
+            res.status(500).send({message: "Could not find a user with this id  "});
+        }else{
+			// console.log("andrews");
+			if(user[0]){
+				
+				
+				console.log(user[0]);				
+	   var tokenexchange=new Tokenexchange({userid:req.body.useridd,amount:amt,token:token});
+	    tokenexchange.save(function(err, data) {
+        
+			
+             if(err) {
+                res.status(500).send({message: "Something went wrong"});
+             } 
+             else {
+              
+              var clientref=data._id;
+              var momoname=user[0].momo_name;
+              var momonumber=user[0].momo_number;
+              
+                console.log(clientref);
+             request.post({url:'https://api.hubtel.com/v1/merchantaccount/merchants/HM3005170017/receive/mobilemoney',
+				    headers:{"authorization":"Basic YWlxenByeGI6cGpkZWh2bXg="},
+				   form: {"CustomerName":momoname.toString(),"CustomerMsisdn":momonumber.toString(),
+					   "Channel":'mtn-gh',"Amount":amt,"PrimaryCallbackUrl":"google.com","Description":"Token purchase","ClientReference":clientref.toString()}},
+				    function(err,response,body){ 
+					   
+					   if(err){
+						  console.log(err); 
+					   }
+					   else{
+						   
+						   var json = JSON.parse(body);
+						   
+			
+						   Tokenexchange.update({_id:data._id}, {$set:{tranxid:json["Data"].TransactionId,amountaftercharge:json["Data"].AmountAfterCharges}});
+						  
+					   }
+					   })
+               
+				 res.send({message:"Processing payment"});
+             }
+		 
+        }); 
+			  
+				
+				
+				
+			}
+			
+			else{
+			res.status(400).send({message: "Could not find a user with this id  "});
+				
+			}
+			}});
+	   
+	   }
+   };
+   
+   
+   
+   exports.buytokenCalback = function(req, res) {
+	   
+	 console.log(req.body);  
+	   
+   };
+
+	
+	
+
 	

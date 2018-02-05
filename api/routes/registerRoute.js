@@ -6,5 +6,7 @@ module.exports = function(app) {
     app.post('/register', controller.register);
      app.get('/gethome', controller.gethome);
       app.post('/updateuser', controller.updateuser);
+      app.post('/buytoken', controller.buytoken);
+      
 
 }
