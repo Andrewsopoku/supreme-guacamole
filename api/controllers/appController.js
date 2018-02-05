@@ -126,8 +126,8 @@ exports.updateuser = function(req, res) {
                 res.status(500).send({message: "Could not update user with id"});
              } 
              else {
-               
-				 res.send();
+               console.log(data);
+				 res.send({message:"successful"});
              }
         }); 
 			  
