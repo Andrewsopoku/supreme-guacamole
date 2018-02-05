@@ -155,7 +155,7 @@ exports.buytoken = function(req, res) {
 	   
 	   UsersInfo.find({"_id":req.body.useridd}, function(err, user) {
         if(err) {
-            res.status(500).send({message: "Could not find a user with this id  "});
+            res.status(400).send({message: "Could not find a user with this id  "});
         }else{
 			// console.log("andrews");
 			if(user[0]){
@@ -167,7 +167,7 @@ exports.buytoken = function(req, res) {
         
 			
              if(err) {
-                res.status(500).send({message: "Something went wrong"});
+                res.status(400).send({message: "Something went wrong"});
              } 
              else {
               
