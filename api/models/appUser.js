@@ -54,6 +54,10 @@ var UserInfo = new Schema({
     type: String,
     default: 'active'
   },
+  city: {
+    type: String
+   
+  },
   pledge:{
 	  type:Number,
 	  default:0

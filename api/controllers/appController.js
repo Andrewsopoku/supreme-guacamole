@@ -81,7 +81,7 @@ exports.gethome = function(req, res) {
 	   
 	UsersInfo.find({"_id":req.query.useridd}, function(err, user) {
         if(err) {
-            res.status(500).send({message: "Could not find a note with id "});
+            res.status(500).send({message: "Could not find a user with this id  "});
         }else{
 			if(user[0]){
 			console.log(user[0]);
@@ -92,7 +92,7 @@ exports.gethome = function(req, res) {
 			
 			Info.find({}, function(err, user) {
         if(err) {
-            res.status(500).send({message: "Could not find a note with id "});
+            res.status(500).send({message: "Could not find a user with this id "});
         }else{
 			console.log(user);
 			
@@ -103,7 +103,7 @@ exports.gethome = function(req, res) {
 		}});
 		
 	}else{
-		  res.status(500).send({message: "Could not find a note with id "});
+		  res.status(500).send({message: "Could not find a user with this id  "});
 		
 	}
     }    
@@ -112,3 +112,28 @@ exports.gethome = function(req, res) {
 
 }
 };
+
+exports.updateuser = function(req, res) {
+	console
+	 if(!req.body.useridd) {
+        res.status(400).send({message: "You are lost"});
+        console.log("attacker here");
+    }
+   else {
+	    UsersInfo.update({_id:req.body.useridd}, {$set:{momo_name:req.body.momo_name,momo_number:req.body.momo_number,city:req.body.city}},function(err, data){
+            
+             if(err) {
+                res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               
+				 res.send();
+             }
+        }); 
+			  
+	   
+   }
+	
+	
+};
+	
