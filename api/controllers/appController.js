@@ -219,8 +219,9 @@ exports.buytoken = function(req, res) {
    
    
    exports.buytokenCallback = function(req, res) {
-	   
+	   console.log("consulted");
 	 console.log(req.body); 
+	 
 	 var caljson = JSON.parse(req.body);
 	 if(caljson.ResponseCode==""){
 		 
