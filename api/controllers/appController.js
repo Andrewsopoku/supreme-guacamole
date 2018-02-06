@@ -86,7 +86,7 @@ exports.gethome = function(req, res) {
             res.status(500).send({message: "Could not find a user with this id  "});
         }else{
 			if(user[0]){
-			console.log(user[0]);
+			
 			
 			a['token']=user[0].token;
 			a['pledge']=user[0].pledge;
@@ -96,7 +96,6 @@ exports.gethome = function(req, res) {
         if(err) {
             res.status(500).send({message: "Could not find a user with this id "});
         }else{
-			console.log(user);
 			
 			a['info']=user;
 			homedetail.push(a);
@@ -168,6 +167,7 @@ exports.buytoken = function(req, res) {
 			
              if(err) {
                 res.status(400).send({message: "Something went wrong"});
+                console.log(err);
              } 
              else {
               
@@ -206,7 +206,9 @@ exports.buytoken = function(req, res) {
 			}
 			
 			else{
-			res.status(400).send({message: "Could not find a user with this id  "});
+			res.status(401).send({message: "Could not find a user with this id  "});
+			console.log("user not found");
+			console.log(user);
 				
 			}
 			}});
@@ -219,6 +221,34 @@ exports.buytoken = function(req, res) {
    exports.buytokenCallback = function(req, res) {
 	   
 	 console.log(req.body); 
+	 var caljson = JSON.parse(req.body);
+	 if(caljson.ResponseCode==""){
+		 
+		 
+		    Tokenexchange.update({_id:caljson["Data"].ClientReference}, {$set:{purchase:true,message:caljson["Data"].Description}});
+		    Tokenexchange.find({_id:caljson["Data"].ClientReference}, function(err, user) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+        }else{
+			// console.log("andrews");
+			if(user[0]){
+				
+				UsersInfo.update({_id:user[0].userid}, {$inc:{token:user[0].token}});
+		    
+				
+				
+			}
+		}});
+						
+		 
+	 }else{
+		 
+		 Tokenexchange.update({_id:caljson["Data"].ClientReference}, {$set:{message:caljson["Data"].Description}});
+		    
+		 
+	 }
+	 
+	 
 	 
 	 res.send({message:"callback"}) 
 	   
