@@ -248,7 +248,7 @@ exports.buytoken = function(req, res) {
 		 
 		 Tokenexchange.update({_id:caljson["Data"].ClientReference}, {$set:{message:caljson["Data"].Description}});
 		    
-		 
+		 console.log(Tokenexchange);
 	 }
 	 
 	 
