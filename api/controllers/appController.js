@@ -2,6 +2,10 @@ var UsersInfo = require('../models/appUser.js');
 var Info=require('../models/appInfo.js');
 var Tokenexchange=require('../models/appTokenexchange.js');
 var request = require('request');
+var ObjectID = require('mongodb').ObjectID;
+var Pledgebook = require('../models/appPledgebook.js')
+var Pledge = require('../models/appPledge.js')
+
 
 
 
@@ -224,19 +228,39 @@ exports.buytoken = function(req, res) {
 	   console.log("consulted");
 	 console.log(req.body); 
 	 
-	 var caljson = JSON.parse(req.body);
-	 if(caljson['ResponseCode']==""){
+	 
+	 if(req.body.ResponseCode=="0000"){
 		 
 		 
-		    Tokenexchange.update({_id:caljson["Data"].ClientReference}, {$set:{purchase:true,message:caljson["Data"].Description}});
-		    Tokenexchange.find({_id:caljson["Data"].ClientReference}, function(err, user) {
+		    Tokenexchange.update({_id:req.body.Data.ClientReference}, {$set:{purchase:true,message:req.body.Data.Description}},function(err, datat){
+            
+             if(err) {
+                res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               console.log(datat);
+				
+             }
+        }); 
+			  
+		    Tokenexchange.find({_id:req.body.Data.ClientReference}, function(err, user) {
         if(err) {
             res.status(400).send({message: "Could not find a user with this id  "});
         }else{
 			// console.log("andrews");
 			if(user[0]){
 				
-				UsersInfo.update({_id:user[0].userid}, {$inc:{token:user[0].token}});
+				UsersInfo.update({_id:user[0].userid}, {$inc:{token:user[0].token}},function(err, datau){
+            
+             if(err) {
+                res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               console.log(datau);
+				 //res.send({message:"successful"});
+             }
+        }); 
+			  
 		    
 				
 				
@@ -245,10 +269,22 @@ exports.buytoken = function(req, res) {
 						
 		 
 	 }else{
+		 console.log(req.body.Data.ClientReference);
+		 Tokenexchange.update({_id:new ObjectID(req.body.Data.ClientReference)}, {$set:{message:req.body.Data.Description}},function(err, datatt){
+            
+             if(err) {
+                res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               console.log(datatt);
+				// res.send({message:"successful"});
+             }
+        }); 
+			  
+		    Tokenexchange.find({}, function(err, userd) {
+		 console.log(userd);
 		 
-		 Tokenexchange.update({_id:caljson["Data"].ClientReference}, {$set:{message:caljson["Data"].Description}});
-		    
-		 console.log(Tokenexchange);
+	 });
 	 }
 	 
 	 
@@ -258,6 +294,155 @@ exports.buytoken = function(req, res) {
    };
 
 	
-	
 
+exports.makePledge = function(req, res) {
+	var token;
+	var amt;
+	 if((!req.body.useridd) || (!req.body.amt)) {
+        res.status(400).send({message: "You are lost"});
+        console.log("attacker here");
+    }
+   else {
+	  
+	   
+	   
+	   UsersInfo.find({"_id":req.body.useridd}, function(err, user) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+        }else{
+			// console.log("andrews");
+			if(user[0]){
+				
+				
+				//console.log(user[0]);				
+	   var pbook=new Pledgebook({personid:req.body.useridd});
+	    pbook.save(function(err, data) {
+        
+			
+             if(err) {
+                res.status(400).send({message: "Something went wrong"});
+                console.log(err);
+             } 
+             else {
+              
+              var clientref=data._id;
+              var momoname=user[0].momo_name;
+              var momonumber=user[0].momo_number;
+              
+                console.log(clientref);
+                
+             request.post({url:'https://api.hubtel.com/v1/merchantaccount/merchants/HM3005170017/receive/mobilemoney',
+				    headers:{"authorization":"Basic YWlxenByeGI6cGpkZWh2bXg="},
+				   form: {"CustomerName":momoname.toString(),"CustomerMsisdn":momonumber.toString(),
+					   "Channel":'mtn-gh',"Amount":51,"PrimaryCallbackUrl":"http://5.150.236.20:8080/makepledgecallback","SecondaryCallbackURL":
+					   "http://andrews.requestcatcher.com/test",
+					   "Description":"Token purchase","ClientReference":clientref.toString()}},
+				    function(err,response,body){ 
+					   
+					   if(err){
+						  console.log(err); 
+					   }
+					   else{
+						   
+						   var json = JSON.parse(body);
+						   console.log(json); 
+			
+						  Pledgebook.update({_id:data._id}, {$set:{tranxid:json["Data"].TransactionId}});
+						  
+					   }
+					   });
+               
+				 res.send({message:"Processing payment"});
+             }
+		 
+        }); 
+			  
+				
+				
+				
+			}
+			
+			else{
+			res.status(401).send({message: "Could not find a user with this id  "});
+			console.log("user not found");
+			console.log(user);
+				
+			}
+			}});
+	   
+	   }
+   };
+   
+  	
+
+   exports.makePledgecallback = function(req, res) {
+	   console.log("consulted");
+	 console.log(req.body); 
+	 
+	 
+	 if(req.body.ResponseCode=="0000"){
+		 
+		 
+		    Pledgebook.update({_id:req.body.Data.ClientReference}, {$set:{paid:true,message:req.body.Data.Description}},function(err, datat){
+            
+             if(err) {
+                res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               console.log(datat);
+				
+             }
+        }); 
+			  
+		    Pledgebook.find({_id:req.body.Data.ClientReference}, function(err, user) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+        }else{
+			// console.log("andrews");
+			if(user[0]){
+				
+				UsersInfo.update({_id:user[0].personid}, {$inc:{pledge:1}},function(err, datau){
+            
+             if(err) {
+                res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               console.log(datau);
+				 //res.send({message:"successful"});
+             }
+        }); 
+			  
+		    
+				
+				
+			}
+		}});
+						
+		 
+	 }else{
+		 console.log(req.body.Data.ClientReference);
+		 Tokenexchange.update({_id:new ObjectID(req.body.Data.ClientReference)}, {$set:{message:req.body.Data.Description}},function(err, datatt){
+            
+             if(err) {
+                res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               console.log(datatt);
+				// res.send({message:"successful"});
+             }
+        }); 
+			  
+		    Tokenexchange.find({}, function(err, userd) {
+		 console.log(userd);
+		 
+	 });
+	 }
+	 
+	 
+	 
+	 res.send({message:"callback"}) 
+	   
+   };
+
+	
 	

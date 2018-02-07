@@ -8,6 +8,10 @@ module.exports = function(app) {
       app.post('/updateuser', controller.updateuser);
       app.post('/buytoken', controller.buytoken);
       app.post('/buytokencallback', controller.buytokenCallback);
+      app.post('/makepledge', controller.makePledge);
+      app.post('/makepledgecallback', controller.makePledgecallback);
+      
+      
       
 
 }

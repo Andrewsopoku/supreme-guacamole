@@ -4,32 +4,27 @@ var Schema = mongoose.Schema;
 
 
 var Pledge = new Schema({
-  from: {
+	  pledgeid: {
     type: String
     //required: 'Kindly enter the name of the task'
   },
-  to:{
+  fromid: {
+    type: String
+    //required: 'Kindly enter the name of the task'
+  },
+  toid:{
 	 type: String,
 	 required: 'required' 
   },
-  from_received:{
-  type:boolean
-  },
- to_received:{
-	  type:boolean
+  satisfied:{
 	  
+	type:Boolean,
+	default:false  
   },
-  credit:{
-	 type:int 
-	}  
-  ,
-  Created_date: {
+  Modify_date: {
     type: Date,
-    default: Date.now
-  },
-  status: {
-    type: String,
-    default: 'pending'
+    default: Date.now,
+     lastModified: true
   }
 });
 
