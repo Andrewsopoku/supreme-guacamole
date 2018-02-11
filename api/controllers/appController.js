@@ -446,3 +446,130 @@ exports.makePledge = function(req, res) {
 
 	
 	
+exports.makematch = function(req, res) {
+	pbooker=[];
+	
+	a={};
+	  if (req.method == "POST") {
+      
+     console.log( req.body);
+    
+      
+      
+    }else{
+		
+		
+		Pledgebook.find({ $and: [ {satisfied:false},{paid:true},{locked:false} ] },function(err, pledgebook) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+       
+       
+        }else{
+	  		
+			Pledge.find({satisfied:false} ,function(err, pledge) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+       
+       
+        }else{
+	  				
+	res.render('match.ejs', {pledgebook:pledgebook,pledge:pledge} );
+	
+	
+}
+});		
+	
+	
+}
+});
+	
+	
+	
+	/*  		
+			
+	  		var v=Pledgebook.find({ $and: [ {satisfied:false},{paid:true},{locked:false} ] }).populate({
+    "path": "usersinfos",
+    "match": { "_id": "personid"
+		}
+		})
+.exec(function(err,entries) {
+   // Now client side filter un-matched results
+   entries = entries.filter(function(entry) {
+	   console.log(entries)
+       return entry.personid != null;
+   });
+   // Anything not populated by the query condition is now removed
+});		
+	  		
+	  	 console.log(v)	
+for (var key in pledgebook) {
+    if (pledgebook.hasOwnProperty(key)) {
+		if(key=="_id"){
+       console.log( pledgebook['_id']);
+    
+    
+		 a['pledgeid']=pledgebook['_id']
+	    
+   		UsersInfo.find({_id:pledgebook['personid']},function(err, datau){
+            
+             if(err) {
+                res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+            
+				a['name']=datau[0].momo_name;
+			pbooker.push(a);
+             }
+        }); 
+    
+    
+    }
+    }
+   
+}
+	
+	
+			  
+*/
+}
+};
+
+
+	
+exports.createfirst = function(req, res) {
+	 if(!req.body.gotit) {
+        res.status(400).send({message: "Facebook ID required"});
+       
+    }
+   else {
+		var pbook=new Pledgebook({personid:req.body.gotit});
+	    pbook.save(function(err, data) {
+        
+			
+             if(err) {
+                res.status(400).send({message: "Something went wrong"});
+                console.log(err);
+             } 
+             else {
+				var p=new Pledge({pledgeid:data._id, toid:req.body.gotit});
+	    p.save(function(err, pledge) {
+         
+				 
+               if(err) {
+                res.status(400).send({message: "Something went wrong"});
+                console.log(err);
+             } 
+             else {
+				 
+				 
+				 
+				 
+			 }});
+           }});
+		   
+		
+		
+	res.send();
+}
+};
+
