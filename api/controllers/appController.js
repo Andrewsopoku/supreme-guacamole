@@ -503,7 +503,7 @@ exports.makematch = function(req, res) {
        
         }else{
 			
-			if(Pledge.find({toid:pledgebook[0].personid})){
+			if(Pledge.find({$and: [{toid:pledgebook[0].personid},{_id:req.body.pledge}]}).count()>0){
 				
 					Pledgebook.find({ $and: [ {satisfied:false},{paid:false},{locked:false} ] },function(err, pledgebook) {
         if(err) {
