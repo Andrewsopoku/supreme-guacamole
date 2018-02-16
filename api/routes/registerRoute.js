@@ -11,7 +11,7 @@ module.exports = function(app,passport) {
       app.post('/makepledge', controller.makePledge);
      // app.post('/makepledgecallback', controller.makePledgecallback);
      
-    // app.post('/loadpledge', controller.loadpledge);
+app.post('/loadpledge', controller.loadpledge);
      
     //  app.post('/makepledgecallback', controller.makePledgecallback);
 	app.post('/fshwjwwjwwvwvwv', controller.createfirst);

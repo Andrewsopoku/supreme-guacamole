@@ -349,6 +349,18 @@ exports.makePledge = function(req, res) {
 				
 			else{	
 				
+			 UsersInfo.update({_id:req.body.useridd}, {$inc:{token:-100}},function(err, data){
+            
+             if(err) {
+                res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               console.log(data);
+				
+             }
+        }); 
+			
+				
 				//console.log(user[0]);				
 	   var pbook=new Pledgebook({personid:req.body.useridd});
 	   
@@ -361,10 +373,7 @@ exports.makePledge = function(req, res) {
              } 
              else {
               	
-				UsersInfo.update({_id:user[0].userid}, {$inc:{token:-100}},function(err, datau){
-					
-				});
-            
+			
               
               //Pledgebook.update({_id:data._id}, {$set:{tranxid:json["Data"].TransactionId}});
 					
@@ -408,7 +417,7 @@ exports.makePledge = function(req, res) {
 			// console.log("andrews");
 			if(pledge[0]){
 				console.log(pledge[0])
-				
+				res.send(pledge[0])
 			}}});  
   }  
 	   
@@ -658,7 +667,7 @@ exports.createfirst = function(req, res) {
        
     }
    else {
-		var pbook=new Pledgebook({personid:req.body.gotit});
+		var pbook=new Pledgebook({personid:req.body.gotit,satisfied:true,paid:true,lock:true});
 	    pbook.save(function(err, data) {
         
 			
