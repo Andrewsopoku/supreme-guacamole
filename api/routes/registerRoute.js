@@ -9,11 +9,12 @@ module.exports = function(app,passport) {
       app.post('/buytoken', controller.buytoken);
       app.post('/buytokencallback', controller.buytokenCallback);
       app.post('/makepledge', controller.makePledge);
-      app.post('/makepledgecallback', controller.makePledgecallback);
+     // app.post('/makepledgecallback', controller.makePledgecallback);
      
+    // app.post('/loadpledge', controller.loadpledge);
      
-      app.post('/makepledgecallback', controller.makePledgecallback);
-     app.post('/fshwjwwjwwvwvwv', controller.createfirst);
+    //  app.post('/makepledgecallback', controller.makePledgecallback);
+	app.post('/fshwjwwjwwvwvwv', controller.createfirst);
      
          app.get('/login', function(req, res) {
 			res.render('signin.ejs', { message: req.flash('loginMessage') }); 

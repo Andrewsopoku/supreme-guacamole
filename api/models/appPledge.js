@@ -16,10 +16,27 @@ var Pledge = new Schema({
 	 type: String,
 	 required: 'required' 
   },
+  toname:{
+	type:String  
+	  
+  },
+  tonumber:{
+	  
+	  type:String  
+  },
+  topic:{
+	 type:String   
+  },
   satisfied:{
 	  
 	type:Boolean,
 	default:false  
+  },
+  lock:{
+	  
+	type:Boolean,
+	default:false 
+	  
   },
   Modify_date: {
     type: Date,
@@ -27,6 +44,8 @@ var Pledge = new Schema({
      lastModified: true
   }
 });
+
+
 
 module.exports = mongoose.model('Pledges', Pledge);
 

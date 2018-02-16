@@ -21,6 +21,13 @@
 	<div class="margin">
 		<h5 class="m-b-0 _300">Hi </h5>
 		<small class="text-muted"></small>
+		   <div class="navbar">
+          <% if (message.length > 0) { %>
+        <div class="alert alert-danger text-center"><%= message %></div>
+    <% } %>
+
+      
+    </div>
 	</div>
 <form method="post" action="/makematch">
 	<div class="row">
@@ -93,7 +100,7 @@ for ( var i = 0; i < pledgebook.length; i++ )
 <%
 for ( var i = 0; i < pledge.length; i++ )
 {
-     %><option value="<%=pledge[ i ]._id %>" <%= %>><%=pledge[ i ].toid %></option><%
+     %><option value="<%=pledge[ i ]._id %>" <%= %>><%=pledge[ i ]._id %></option><%
 }
 %>
 </select>

@@ -94,7 +94,7 @@ exports.gethome = function(req, res) {
 			
 			a['token']=user[0].token;
 			a['pledge']=user[0].pledge;
-			homedetail.push(a);
+			//homedetail.push(a);
 			
 			Info.find({}, function(err, user) {
         if(err) {
@@ -102,8 +102,34 @@ exports.gethome = function(req, res) {
         }else{
 			
 			a['info']=user;
-			homedetail.push(a);
+			//homedetail.push(a);
+			
+			 
+	Pledge.findOne({$and: [ {"fromid":req.query.useridd},{"lock":true},{"satisfied":false}]}, function(err, pledge) {
+        if(err) {
+           a['matched']=false;
+           homedetail.push(a);
+            res.send(homedetail);
+        }else{
+			if(pledge){
+			console.log(pledge);
+			
+			a['match']=pledge;
+			
+			//homedetail.push(a);
+			a['matched']=true;
+           homedetail.push(a);
+           
 			res.send(homedetail);
+		}else{
+			
+			     a['matched']=false;
+           homedetail.push(a);
+            res.send(homedetail);
+			
+		}
+			
+		}});
 			
 		}});
 		
@@ -313,9 +339,19 @@ exports.makePledge = function(req, res) {
 			// console.log("andrews");
 			if(user[0]){
 				
+				if(user[0].token<100)
+				
+				
+				{
+					res.status(400).send({message: "Your token is too low. Purchase from store"});
+				}
+				
+				
+			else{	
 				
 				//console.log(user[0]);				
 	   var pbook=new Pledgebook({personid:req.body.useridd});
+	   
 	    pbook.save(function(err, data) {
         
 			
@@ -324,41 +360,22 @@ exports.makePledge = function(req, res) {
                 console.log(err);
              } 
              else {
+              	
+				UsersInfo.update({_id:user[0].userid}, {$inc:{token:-100}},function(err, datau){
+					
+				});
+            
               
-              var clientref=data._id;
-              var momoname=user[0].momo_name;
-              var momonumber=user[0].momo_number;
-              
-                console.log(clientref);
-                
-             request.post({url:'https://api.hubtel.com/v1/merchantaccount/merchants/HM3005170017/receive/mobilemoney',
-				    headers:{"authorization":"Basic YWlxenByeGI6cGpkZWh2bXg="},
-				   form: {"CustomerName":momoname.toString(),"CustomerMsisdn":momonumber.toString(),
-					   "Channel":'mtn-gh',"Amount":51,"PrimaryCallbackUrl":"http://5.150.236.20:8080/makepledgecallback","SecondaryCallbackURL":
-					   "http://andrews.requestcatcher.com/test",
-					   "Description":"Token purchase","ClientReference":clientref.toString()}},
-				    function(err,response,body){ 
-					   
-					   if(err){
-						  console.log(err); 
-					   }
-					   else{
-						   
-						   var json = JSON.parse(body);
-						   console.log(json); 
-			
-						  Pledgebook.update({_id:data._id}, {$set:{tranxid:json["Data"].TransactionId}});
-						  
-					   }
-					   });
+              //Pledgebook.update({_id:data._id}, {$set:{tranxid:json["Data"].TransactionId}});
+					
                
-				 res.send({message:"Processing payment"});
+				 res.send({message:"Marching in progress. You will be matched to someone soon"});
              }
 		 
         }); 
 			  
 				
-				
+			}
 				
 			}
 			
@@ -373,78 +390,103 @@ exports.makePledge = function(req, res) {
 	   }
    };
    
+ 	
+   exports.loadpledge = function(req, res) {
+	   
+	    
+	 if((!req.body.useridd) || (!req.body.amt)) {
+        res.status(400).send({message: "You are lost"});
+        console.log("attacker here");
+    }
+   else {
+	  
+	  
+	Pledge.find({"toid":req.body.useridd}, function(err, pledge) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+        }else{
+			// console.log("andrews");
+			if(pledge[0]){
+				console.log(pledge[0])
+				
+			}}});  
+  }  
+	   
+	   
+   };
+	
   	
 
-   exports.makePledgecallback = function(req, res) {
-	   console.log("consulted");
-	 console.log(req.body); 
-	 
-	 
-	 if(req.body.ResponseCode=="0000"){
-		 
-		 
-		    Pledgebook.update({_id:req.body.Data.ClientReference}, {$set:{paid:true,message:req.body.Data.Description}},function(err, datat){
-            
-             if(err) {
-                res.status(500).send({message: "Could not update user with id"});
-             } 
-             else {
-               console.log(datat);
-				
-             }
-        }); 
-			  
-		    Pledgebook.find({_id:req.body.Data.ClientReference}, function(err, user) {
+   exports.makePledgeconfirm = function(req, res) {
+
+	   
+	 if((!req.body.useridd) || (!req.body.amt)) {
+        res.status(400).send({message: "You are lost"});
+        console.log("attacker here");
+    }
+   else {
+	  
+	   
+	   
+	   UsersInfo.find({"_id":req.body.useridd}, function(err, user) {
         if(err) {
             res.status(400).send({message: "Could not find a user with this id  "});
         }else{
 			// console.log("andrews");
 			if(user[0]){
 				
-				UsersInfo.update({_id:user[0].personid}, {$inc:{pledge:1}},function(err, datau){
-            
+				if(user[0].token<100)
+				
+				
+				{
+					res.status(400).send({message: "Your token is too low. Purchase from store"});
+				}
+				
+				
+			else{	
+				
+				//console.log(user[0]);				
+	   var pbook=new Pledgebook({personid:req.body.useridd});
+	    pbook.save(function(err, data) {
+        
+			
              if(err) {
-                res.status(500).send({message: "Could not update user with id"});
+                res.status(400).send({message: "Something went wrong"});
+                console.log(err);
              } 
              else {
-               console.log(datau);
-				 //res.send({message:"successful"});
+              	
+				UsersInfo.update({_id:user[0].userid}, {$inc:{token:-100}},function(err, datau){
+					
+				});
+            
+              
+              //Pledgebook.update({_id:data._id}, {$set:{tranxid:json["Data"].TransactionId}});
+					
+               
+				 res.send({message:"Marching in progress. You will be matched to someone soon"});
              }
+		 
         }); 
 			  
-		    
-				
 				
 			}
-		}});
-						
-		 
-	 }else{
-		 console.log(req.body.Data.ClientReference);
-		 Tokenexchange.update({_id:new ObjectID(req.body.Data.ClientReference)}, {$set:{message:req.body.Data.Description}},function(err, datatt){
-            
-             if(err) {
-                res.status(500).send({message: "Could not update user with id"});
-             } 
-             else {
-               console.log(datatt);
-				// res.send({message:"successful"});
-             }
-        }); 
-			  
-		    Tokenexchange.find({}, function(err, userd) {
-		 console.log(userd);
-		 
-	 });
-	 }
-	 
-	 
-	 
-	 res.send({message:"callback"}) 
+				
+			}
+			
+			else{
+			res.status(401).send({message: "Could not find a user with this id  "});
+			console.log("user not found");
+			console.log(user);
+				
+			}
+			}});
+	   
+	   }
+	   
 	   
    };
 
-	
 	
 exports.makematch = function(req, res) {
 	pbooker=[];
@@ -454,26 +496,100 @@ exports.makematch = function(req, res) {
       
      console.log( req.body);
     
-      
-      
-    }else{
-		
-		
-		Pledgebook.find({ $and: [ {satisfied:false},{paid:true},{locked:false} ] },function(err, pledgebook) {
+		Pledgebook.find({ _id: req.body.pb },function(err, pledgebook) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+       
+       
+        }else{
+			
+			if(Pledge.find({toid:pledgebook[0].personid})){
+				
+					Pledgebook.find({ $and: [ {satisfied:false},{paid:false},{locked:false} ] },function(err, pledgebook) {
         if(err) {
             res.status(400).send({message: "Could not find a user with this id  "});
        
        
         }else{
 	  		
-			Pledge.find({satisfied:false} ,function(err, pledge) {
+			Pledge.find({ $and:[{satisfied:false},{lock:false}] },function(err, pledge) {
         if(err) {
             res.status(400).send({message: "Could not find a user with this id  "});
        
        
         }else{
 	  				
-	res.render('match.ejs', {pledgebook:pledgebook,pledge:pledge} );
+	res.render('match.ejs', {pledgebook:pledgebook,pledge:pledge,message:"Cant match same person's pledge"} );
+	
+	
+}
+});		
+	
+	
+}
+});
+	
+				
+			}
+			else{
+			
+			console.log(pledgebook)
+							Pledge.update({_id:req.body.pledge}, {$set:{fromid:pledgebook[0].personid,lock:true}},function(err, datau){
+					
+				
+      Pledgebook.update({_id:req.body.pb}, {$set:{locked:true}},function(err, datao){
+				
+						
+		Pledgebook.find({ $and: [ {satisfied:false},{paid:false},{locked:false} ] },function(err, pledgebook) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+       
+       
+        }else{
+	  		
+			Pledge.find({ $and:[{satisfied:false},{lock:false}] },function(err, pledge) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+       
+       
+        }else{
+	  				
+	res.render('match.ejs', {pledgebook:pledgebook,pledge:pledge,message:"Pledge completed"} );
+	
+	
+}
+});		
+	
+	
+}
+});
+					
+				});
+				
+				});
+  
+  
+}
+  
+  }});
+    }else{
+		
+		
+		Pledgebook.find({ $and: [ {satisfied:false},{paid:false},{locked:false} ] },function(err, pledgebook) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+       
+       
+        }else{
+	  		
+			Pledge.find(  { $and:[{satisfied:false},{lock:false} ]},function(err, pledge) {
+        if(err) {
+            res.status(400).send({message: "Could not find a user with this id  "});
+       
+       
+        }else{
+	  				
+	res.render('match.ejs', {pledgebook:pledgebook,pledge:pledge,message:""} );
 	
 	
 }
@@ -551,7 +667,15 @@ exports.createfirst = function(req, res) {
                 console.log(err);
              } 
              else {
-				var p=new Pledge({pledgeid:data._id, toid:req.body.gotit});
+				 
+				 UsersInfo.find({'_id':req.body.gotit},function(err,user){
+					 
+					 if(err){
+						 
+						 
+					 }
+					 else{
+							var p=new Pledge({pledgeid:data._id, toid:req.body.gotit,toname:user[0].momo_name,tonumber:user[0].momo_number,topic:user[0].profilePictureUrl});
 	    p.save(function(err, pledge) {
          
 				 
@@ -564,7 +688,12 @@ exports.createfirst = function(req, res) {
 				 
 				 
 				 
-			 }});
+			 }}); 
+						 
+					 }});
+					 
+				 
+			
            }});
 		   
 		
