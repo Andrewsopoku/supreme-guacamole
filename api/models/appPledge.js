@@ -12,6 +12,17 @@ var Pledge = new Schema({
     type: String
     //required: 'Kindly enter the name of the task'
   },
+    fromname:{
+	type:String  
+	  
+  },
+  fromnumber:{
+	  
+	  type:String  
+  },
+  frompic:{
+	 type:String   
+  },
   toid:{
 	 type: String,
 	 required: 'required' 

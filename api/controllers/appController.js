@@ -410,7 +410,7 @@ exports.makePledge = function(req, res) {
    else {
 	  
 	  
-	Pledge.find({"toid":req.body.useridd}, function(err, pledge) {
+	Pledge.find({$and:[{"toid":req.body.useridd},{"lock":true}]}, function(err, pledge) {
         if(err) {
             res.status(400).send({message: "Could not find a user with this id  "});
         }else{
@@ -418,7 +418,13 @@ exports.makePledge = function(req, res) {
 			if(pledge[0]){
 				console.log(pledge[0])
 				res.send(pledge[0])
-			}}});  
+			}
+			else{
+				
+				console.log(pledge)
+				res.status(400).send({message: "no pledge available"});
+			}
+			}});  
   }  
 	   
 	   
@@ -511,8 +517,13 @@ exports.makematch = function(req, res) {
        
        
         }else{
+			var ppp=Pledge.find({$and: [{toid:pledgebook[0].personid},{_id:req.body.pledge}]}).count(function(err,co){
+				
+			console.log(co);
+
 			
-			if(Pledge.find({$and: [{toid:pledgebook[0].personid},{_id:req.body.pledge}]}).count()>0){
+			
+			if(co>0){
 				
 					Pledgebook.find({ $and: [ {satisfied:false},{paid:false},{locked:false} ] },function(err, pledgebook) {
         if(err) {
@@ -543,7 +554,11 @@ exports.makematch = function(req, res) {
 			else{
 			
 			console.log(pledgebook)
-							Pledge.update({_id:req.body.pledge}, {$set:{fromid:pledgebook[0].personid,lock:true}},function(err, datau){
+			
+			UsersInfo.find({"_id":pledgebook[0].personid},function(err,userdata){
+				
+							Pledge.update({_id:req.body.pledge}, {$set:{fromid:pledgebook[0].personid,lock:true,fromname:userdata[0].momo_name,fromnum:userdata[0].momo_number,
+								frompic:userdata[0].profilePictureUrl}},function(err, datau){
 					
 				
       Pledgebook.update({_id:req.body.pb}, {$set:{locked:true}},function(err, datao){
@@ -573,13 +588,17 @@ exports.makematch = function(req, res) {
 }
 });
 					
+					
+					
 				});
 				
 				});
   
-  
+ }); 
 }
   
+  
+  				});
   }});
     }else{
 		
