@@ -9,7 +9,7 @@ module.exports = function(app,passport) {
       app.post('/buytoken', controller.buytoken);
       app.post('/buytokencallback', controller.buytokenCallback);
       app.post('/makepledge', controller.makePledge);
-     // app.post('/makepledgecallback', controller.makePledgecallback);
+     app.post('/makepledgeconfirm', controller.makePledgeconfirm);
      
 app.post('/loadpledge', controller.loadpledge);
      

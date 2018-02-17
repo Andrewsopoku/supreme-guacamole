@@ -23,6 +23,9 @@ var Pledge = new Schema({
   frompic:{
 	 type:String   
   },
+    frompid:{
+	 type:String   
+  },
   toid:{
 	 type: String,
 	 required: 'required' 

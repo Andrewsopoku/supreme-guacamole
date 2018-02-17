@@ -435,7 +435,7 @@ exports.makePledge = function(req, res) {
    exports.makePledgeconfirm = function(req, res) {
 
 	   
-	 if((!req.body.useridd) || (!req.body.amt)) {
+	 if((!req.body.useridd) || (!req.body.p_id)) {
         res.status(400).send({message: "You are lost"});
         console.log("attacker here");
     }
@@ -443,63 +443,111 @@ exports.makePledge = function(req, res) {
 	  
 	   
 	   
-	   UsersInfo.find({"_id":req.body.useridd}, function(err, user) {
-        if(err) {
-            res.status(400).send({message: "Could not find a user with this id  "});
-        }else{
-			// console.log("andrews");
-			if(user[0]){
-				
-				if(user[0].token<100)
-				
-				
-				{
-					res.status(400).send({message: "Your token is too low. Purchase from store"});
-				}
-				
-				
-			else{	
-				
-				//console.log(user[0]);				
-	   var pbook=new Pledgebook({personid:req.body.useridd});
-	    pbook.save(function(err, data) {
-        
-			
+	   Pledge.update({"_id":req.body.p_id},{$set:{satisfied:true}},function(err, data){
+            
              if(err) {
-                res.status(400).send({message: "Something went wrong"});
                 console.log(err);
              } 
              else {
-              	
-				UsersInfo.update({_id:user[0].userid}, {$inc:{token:-100}},function(err, datau){
-					
-				});
-            
-              
-              //Pledgebook.update({_id:data._id}, {$set:{tranxid:json["Data"].TransactionId}});
-					
-               
-				 res.send({message:"Marching in progress. You will be matched to someone soon"});
+               console.log(data);
+				
              }
-		 
         }); 
+	   
+	  Pledge.find({"_id":req.body.p_id},function(err,respl){
+		  if(err)
+		 
+		  {
+			   console.log(err)
+			  res.status(400).send({message: "something went wrong"});
 			  
-				
-			}
-				
-			}
+		  }else
+		if(respl[0]){
 			
-			else{
-			res.status(401).send({message: "Could not find a user with this id  "});
-			console.log("user not found");
-			console.log(user);
+			Pledgebook.update({"_id":respl[0].frompid},{$set:{paid:true}},function(err, data){
+            
+             if(err) {
+              //  res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               console.log(data);
 				
-			}
-			}});
-	   
-	   }
-	   
-	   
+             }
+        }); 
+        
+        Pledgebook.update({"_id":respl[0].pledgeid},{$set:{satisfied:true}},function(err, data){
+            
+             if(err) {
+               // res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               console.log(data);
+				
+             }
+        }); 
+        
+        
+        	 UsersInfo.find({'_id':respl[0].fromid},function(err,user){
+					 
+					 if(err){
+						 
+						 
+					 }
+					 else{
+							var p=new Pledge({pledgeid:respl[0].frompid, toid:respl[0].fromid,toname:user[0].momo_name,tonumber:user[0].momo_number,topic:user[0].profilePictureUrl});
+	    p.save(function(err, pledge) {
+         
+				 
+               if(err) {
+              //  res.status(400).send({message: "Something went wrong"});
+                console.log(err);
+             } 
+             else {
+				 
+				 
+				 
+				 
+			 }}); 
+					
+					
+					
+									var pp=new Pledge({pledgeid:respl[0].frompid, toid:respl[0].fromid,toname:user[0].momo_name,tonumber:user[0].momo_number,topic:user[0].profilePictureUrl});
+	    pp.save(function(err, pledge) {
+         
+				 
+               if(err) {
+               // res.status(400).send({message: "Something went wrong"});
+                console.log(err);
+             } 
+             else {
+				 
+				 
+				 
+				 
+			 }}); 
+						 
+					 }});
+					 
+					 
+        UsersInfo.update({"_id":respl[0].fromid},{$inc:{pledge:1}},function(err, data){
+            
+             if(err) {
+               // res.status(500).send({message: "Could not update user with id"});
+             } 
+             else {
+               console.log(data);
+				
+             }
+        }); 
+       res.send("all set");
+		console.log(respl);	 
+		 
+		  
+		 } 
+	  });				
+						
+	 
+	  } 
    };
 
 	
@@ -558,7 +606,7 @@ exports.makematch = function(req, res) {
 			UsersInfo.find({"_id":pledgebook[0].personid},function(err,userdata){
 				
 							Pledge.update({_id:req.body.pledge}, {$set:{fromid:pledgebook[0].personid,lock:true,fromname:userdata[0].momo_name,fromnumber:userdata[0].momo_number,
-								frompic:userdata[0].profilePictureUrl}},function(err, datau){
+								frompic:userdata[0].profilePictureUrl,frompid:req.body.pb}},function(err, datau){
 					
 				
       Pledgebook.update({_id:req.body.pb}, {$set:{locked:true}},function(err, datao){
