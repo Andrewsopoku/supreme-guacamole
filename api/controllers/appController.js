@@ -417,7 +417,7 @@ exports.makePledge = function(req, res) {
 			// console.log("andrews");
 			if(pledge[0]){
 				console.log(pledge[0])
-				res.send(pledge[0])
+				res.send(pledge)
 			}
 			else{
 				
