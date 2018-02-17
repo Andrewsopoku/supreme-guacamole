@@ -557,7 +557,7 @@ exports.makematch = function(req, res) {
 			
 			UsersInfo.find({"_id":pledgebook[0].personid},function(err,userdata){
 				
-							Pledge.update({_id:req.body.pledge}, {$set:{fromid:pledgebook[0].personid,lock:true,fromname:userdata[0].momo_name,fromnum:userdata[0].momo_number,
+							Pledge.update({_id:req.body.pledge}, {$set:{fromid:pledgebook[0].personid,lock:true,fromname:userdata[0].momo_name,fromnumber:userdata[0].momo_number,
 								frompic:userdata[0].profilePictureUrl}},function(err, datau){
 					
 				
