@@ -94,6 +94,7 @@ exports.gethome = function(req, res) {
 			
 			a['token']=user[0].token;
 			a['pledge']=user[0].pledge;
+			a['status']=user[0].status;
 			//homedetail.push(a);
 			
 			Info.find({}, function(err, user) {
