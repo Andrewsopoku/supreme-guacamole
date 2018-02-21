@@ -54,6 +54,13 @@ app.post('/loadpledge', controller.loadpledge);
 
     
       app.post('/makematch', controller.makematch);
+      
+      
+		app.get('/info', controller.info);
+
+    
+      app.post('/info', controller.info);
+
 
   function isLoggedIn(req, res, next) {
 

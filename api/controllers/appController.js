@@ -779,3 +779,51 @@ exports.createfirst = function(req, res) {
 }
 };
 
+
+exports.info = function(req, res) {
+	
+	  if (req.method == "POST") {
+    if(! req.body.infotitle || ! req.body.infomessage){
+		res.render('info.ejs', {message:"Title or message missing"} );
+		
+	}
+	else{
+		    var info = new Info({title: req.body.infotitle,message:req.body.infomessage});
+
+    info.save(function(err, data) {
+        
+        if(err) {
+			
+			res.render('info.ejs', {message:"Something went wrong"} );
+			
+		}else{
+			res.render('info.ejs', {message:"Info saved"} );
+			
+		}
+			
+		
+	});
+	
+	}
+       
+        }else{
+			
+			Info.find({},function(err,info){
+				if(err){
+					res.render('info.ejs', {message:"Welcome"} );
+				}else{
+					
+					res.render('info.ejs', {info:info,message:"Welcome"} );
+				}
+				
+				
+			});
+	  				
+	
+	
+	
+}
+	
+
+};
+
