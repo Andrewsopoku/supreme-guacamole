@@ -99,7 +99,8 @@ exports.gethome = function(req, res) {
 			
 			Info.find({query:{},$orderby: {"Created_date" : -1 }}, function(err, user) {
         if(err) {
-            res.status(500).send({message: "Could not find a user with this id "});
+            res.status(500).send({message: "Info error"});
+            console.log(err)
         }else{
 			
 			a['info']=user;
