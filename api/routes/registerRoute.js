@@ -53,13 +53,13 @@ app.post('/loadpledge', controller.loadpledge);
 		app.get('/makematch', controller.makematch);
 
     
-      app.post('/makematch', controller.makematch);
+        app.post('/makematch', controller.makematch);
       
       
-		app.get('/info', controller.info);
+		app.get('/infores', controller.info);
 
     
-      app.post('/info', controller.info);
+        app.post('/infores', controller.info);
 
 
   function isLoggedIn(req, res, next) {
