@@ -97,7 +97,7 @@ exports.gethome = function(req, res) {
 			a['status']=user[0].status;
 			//homedetail.push(a);
 			
-			Info.find({query:{},$orderby: {Created_date : -1 }}, function(err, user) {
+			Info.find({query:{},$orderby: {"Created_date" : -1 }}, function(err, user) {
         if(err) {
             res.status(500).send({message: "Could not find a user with this id "});
         }else{
